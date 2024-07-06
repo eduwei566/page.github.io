@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多功能網頁應用</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            font-size: 1em;
+            color: white;
+            background-color: #5cb85c;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #aaa;
+        }
+
+        .time-display {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>倒數計時器</h1>
+        <div>
+            <label for="minutes">分鐘:</label>
+            <input type="number" id="minutes" min="0" max="60" value="0">
+            <label for="seconds">秒:</label>
+            <input type="number" id="seconds" min="0" max="59" value="0">
+        </div>
+        <div>
+            <button id="startBtn">開始</button>
+            <button id="resetBtn" disabled>重新開始</button>
+        </div>
+        <div class="time-display" id="timeDisplay">00:00</div>
+    </div>
+
+    <script>
+        // 獲取DOM元素
+        const minutesInput = document.getElementById('minutes');
+        const secondsInput = document.getElementById('seconds');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const timeDisplay = document.getElementById('timeDisplay');
+
+        let timer;
+        let totalSeconds;
+
+        // 開始倒數計時
+        startBtn.addEventListener('click', () => {
+            const minutes = parseInt(minutesInput.value);
+            const seconds = parseInt(secondsInput.value);
+            totalSeconds = minutes * 60 + seconds;
+            
+            if (totalSeconds > 0) {
+                startTimer();
+                startBtn.disabled = true;
+                resetBtn.disabled = false;
+            }
+        });
+
+        // 重新開始計時
+        resetBtn.addEventListener('click', () => {
+            clearInterval(timer);
+            startBtn.disabled = false;
+            resetBtn.disabled = true;
+            timeDisplay.textContent = '00:00';
+            minutesInput.value = 0;
+            secondsInput.value = 0;
+        });
+
+        // 計時器功能
+        function startTimer() {
+            timer = setInterval(() => {
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    updateDisplay();
+                } else {
+                    clearInterval(timer);
+                    startBtn.disabled = false;
+                    resetBtn.disabled = true;
+                }
+            }, 1000);
+        }
+
+        // 更新顯示
+        function updateDisplay() {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            timeDisplay.textContent = `${padZero(minutes)}:${padZero(seconds)}`;
+        }
+
+        // 補零函數
+        function padZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+    </script>
+</body>
+</html>
